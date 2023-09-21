@@ -96,21 +96,19 @@ The sample proportion is relevant to the test, therefore the sampling distributi
 
 ```{r}
 alpha_values <- c(0.1, 0.05, 0.01)
+
 for (alpha in alpha_values) {
-  test_statistic <- (sample_proportion - 0.75) / sqrt(((0.75 * (1 - 0.75)) 
-  / sample_size))
-  critical_value <- qnorm(alpha/2,lower.tail=FALSE)  
+  binom_result <- binom.test(x = 140, n = sample_size, p = 0.75, alternative = "two.sided", conf.level = 1 - alpha)
 
   cat("Alpha =", alpha, "\n")
-  cat("Test Statistic:", test_statistic, "\n")
-  cat("Critical Value:", critical_value, "\n")
-  
-  if (test_statistic > - critical_value && test_statistic < critical_value) {
+  cat("Test Statistic:", binom_result$statistic, "\n")
+  cat("p-value:", binom_result$p.value, "\n")
+
+  if (binom_result$p.value > alpha) {
     cat("We fail to reject the null hypothesis.\n")
   } else {
     cat("We reject the null hypothesis.\n")
   }
-  cat("\n")
 }
 ```
 
