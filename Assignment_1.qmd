@@ -1,0 +1,119 @@
+---
+title: "Assignment 1"
+author: Alina Baciu
+date: "2023-25-09"
+format: pdf
+editor: visual
+---
+
+#                     Statistics, Simulation, Optimization
+
+\newpage
+
+# Exercise 1.1 - Birthweights
+
+```{r}
+data <- read.csv("birthweight.txt")
+numerical_values = data[["birthweight"]]
+```
+
+### 1.1.1 Check the normality of the data and compute the point estimate for the population mean u of birthweights
+
+```{r}
+library(rcompanion)
+par(mfrow = c(1,2))
+plotNormalHistogram(numerical_values, main = 'Histogram',
+xlab = 'Birth weights')
+qqnorm(numerical_values)
+```
+
+| The histogram of birthweights illustrates a shape that is close to being bell-shaped while the q-q plot indicates a reasonably close straight-line. Therefore, it is safe to assume that this birthweights sample approximately follows a normal distribution.
+| 
+| The point estimate of the population mean is the sample mean (2913). This was computed by: mean(numerical_values).
+
+### 1.1.2 Construct the 90% confidence interval for population mean
+
+| Because the standard deviation of the population is unknown and the sample size is higher than 30 we picked the Student t distribution to construct the confidence interval of the population mean. The margin of error is calculated as E = critical value \* s/sqrt of n. The degrees of freedom are 188 - 1 = 187 and alpha is 0.10. Due to the high number of degrees of freedom we decided to calculate the critical value using the qt() function.
+
+```{r}
+m <- mean(numerical_values)
+s <- sd(numerical_values) 
+confidence_level <- 0.90
+alpha <- 1 - confidence_level
+critical_value <- qt(1-alpha, df = length(numerical_values) - 1) 
+margin_of_error <- critical_value * (s / sqrt(length(numerical_values)))
+cat("The", confidence_level * 100, "% confidence interval for the population
+mean is (", (m - margin_of_error), ", ", (m + margin_of_error), ")\n")
+```
+
+### 1.1.3 Claim = the mean birthweight is bigger than 2800. Use a t-test.
+
+Ho: u = 2800
+
+Ha: u \> 2800
+
+The significance level is 0.05. The sample mean is relevant to the test and the sampling distribution is t.
+
+```{r}
+t.test(numerical_values, mu = 2800, alternative = "greater")
+```
+
+Based on the above results, because the p-value of 0.01357 is less than the significance level of 0.05, we reject the null hypothesis in favor of the alternative hypothesis. In conclusion, there is evidence to support the expert's claim that the mean birthweight is greater than 2800.
+
+### 1.1.4 Why is the CI from 1.1.3 different from the CI from 1.1.2? Why is the CI from 1.1.3 one-sided?
+
+The confidence interval from 1.1.2 is a two-tailed interval, computed to receive a range of values used to estimate the true value of the population parameter. On the other hand, the confidence interval from 1.1.3 is a one-tailed interval that provides an estimate in favor of the alternative hypothesis. The confidence interval from 1.1.3 is one-sided because it needs to correspond to the alternative hypothesis u \> 2800.
+
+# Exercise 1.2 - Kinderopvangtoeslag
+
+### 1.2.1 Give a point estimate for p
+
+```{r}
+sample_size <- 200
+sample_proportion <- 140/200
+print(sample_proportion)
+```
+
+### 1.2.2 99% confidence interval for p
+
+```{r}
+standard_error <- sqrt((sample_proportion * (1 - sample_proportion)) / 
+sample_size)
+critical_z <- qnorm(0.99)
+margin_of_error <- critical_z * standard_error
+cat("The", 0.99 * 100, "% confidence interval for the proportion
+mean is (", (sample_proportion - margin_of_error), ", ", 
+(sample_proportion + margin_of_error), ")\n")
+```
+
+1.2.3 Test the null hypothesis that the fraction is 75%.
+
+Ho: u = 0.75
+
+Ha: u != 0.75
+
+The sample proportion is relevant to the test, therefore the sampling distribution is Normal.
+
+```{r}
+alpha_values <- c(0.1, 0.05, 0.01)
+for (alpha in alpha_values) {
+  test_statistic <- (sample_proportion - 0.75) / sqrt(((0.75 * (1 - 0.75)) 
+  / sample_size))
+  critical_value <- qnorm(alpha/2,lower.tail=FALSE)  
+
+  cat("Alpha =", alpha, "\n")
+  cat("Test Statistic:", test_statistic, "\n")
+  cat("Critical Value:", critical_value, "\n")
+  
+  if (test_statistic > - critical_value && test_statistic < critical_value) {
+    cat("We fail to reject the null hypothesis.\n")
+  } else {
+    cat("We reject the null hypothesis.\n")
+  }
+  cat("\n")
+}
+```
+
+Based on the results above we fail to reject the null hypothesis using 3 different alpha values.
+
+\newpage
