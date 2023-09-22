@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1"
-author: Alina Baciu
+author: Alina Baciu, Antara Chakrabarty, Yusa Ece Demiral
 date: "2023-25-09"
 format: pdf
 editor: visual
@@ -115,3 +115,150 @@ for (alpha in alpha_values) {
 Based on the results above we fail to reject the null hypothesis using 3 different alpha values.
 
 \newpage
+
+
+
+
+Question 1.3. 
+
+1.3.a.
+
+First, we read the dataset as a table, and by using functions summary(), sd() we get the numerical summary of the data for humidity and temperature.  
+
+data <- read.table('/Users/yusaeced/Desktop/statass1/weather.txt', header=TRUE)
+summary(data); sdH<-sd(data$humidity); sdT <-sd(data$temperature)
+
+Then, we can ımplement varıety of vısualızatıons to get a better grasp of data. Likewise, we can use a a box plot to seek the distribution of the data as it shows the mın, fırst and third quartiles, median, and max.
+
+#Histogram, boxplot for humidity
+boxplot(data$humidity, main = 'Humidity', xlab='percentage', ylab='humidity', col='pink', border='red', horizontal=TRUE )
+
+#Histogram, boxplot for temperature
+boxplot(data$temperature, main = 'Temperature', xlab='Fahrenheit', ylab='temperature', col='pink', border='red', horizontal=TRUE )
+
+ To seek normality, distribution of data, and outliers we can use histograms.
+
+#Histogram for Humidity
+x_num <- as.numeric(unlist(data$humidity))
+hist(x_num, main='Weather Data', xlab='Humidity')
+abline(v=mean(x_num), col='red', lwd=3)
+
+#Histogram for temperature
+x2_num <- as.numeric(unlist(data$temperature))
+hist(x2_num, main='Weather Data', xlab='Temperature')
+abline(v=mean(x2_num), col='red', lwd=3)
+Here, we can see that Humidity has a bell-curve shape, we can estimate a normal distribution. However, temperature data has a non-symetric distribution. 
+We can also explore the relationship between these two variables with Scatter Plot.  While there is a mild upward trend, it is not a strong relationship where we can declare a positive linear association between temperature and humidity. 
+plot(data$humidity, data$temperature, xlab="Humidity", ylab="Temperature", main="Scatter Plot of Humidity vs. Temperature")
+pairs(data)
+
+1.3.b.
+
+While the previous use of histogram did not present a normal distribution to determine whether a dataset is approximately normally distributed we can use the normal Q-Q Plot.
+
+op 1 For the temperature example, we can see that most of the data points follow the trendline, but at the extremes we observe divergence. This divergence suggest the presence of outliers or potential deviations from normality. Moreover, data points stray from the line in a non-linear manner suggesting the distribution is not normally distributed.
+
+ op 2For the temperature example, we can see that most of the data points follow the trendline, but at the extremes we observe a minor divergence. Therefore, we can say it is a light tailed distribution
+qqnorm(data$temperature, ylab='Fahrenheit',pch = 1, frame = FALSE)
+qqline(data$temperature, col = "pink", lwd = 3)
+
+1.3.c. To get the 90% cofidence interval for the mean tempreture we can use the t.test function.
+
+Here we have to options: op1. using t-test to calculate the confidence intervals. 
+confidence_interval ← t.test(data$temperature, conf.level=0.90)$conf.int  This formulation calculates the t-test for a sample and provides the 90% confidence interval in the output. $conf.int is used to get the confidence interval. 
+
+op 2. #sample size 
+temperaturedp←data$temperature
+n ← length(temperaturedp)
+#mean of the data
+sample_mean ← mean(temperaturedp)
+#standar error of the mean
+standart_error ← sd(heights)/sqrt(n)
+#confdence level
+confidence_level ← 0.90
+#calculation of margin of error z*sigma/root n → z-score for confidence level 90% is 1.64 or qnorm(1-0.9)
+margin_of_error ← 1.64 * se #or qt(0.95, df=n-1)*stadart_error/sqrt(n)
+#calculation of confidence interval 
+lowerinterval ← sample_mean - margin_of_error
+upperinterval← sample_mean + margin_of_error
+confidence_interval ← c)lowerinterval, upperinterval); condifence_interval
+
+As per the results, we are 90% confident that the interval from 47.48 57.96 actually contain the true value for the mean temperature. Meaning, if we were to select various samples of the same size and construct the confidence intervals, 90% of them would actually contain the true sample mean. The confidence level refers to the success rate of the process that estımates the mean temperature.
+
+1.3.d. 
+To get the minimum sample size that ensures 95% confidence interval that has at most length 2% we will need to start by defining our parameters: confidence level (1-alpha), maximum margin of error (E), sample proportion (phat). Then calculate the critical value for 95% confidence interval with qnorm(), use the formula (z alpha/2) ^2*sample proportion*(1-sample proportion)/(maximum margin of error)^2.
+
+!! what should we take the p-value !!  - following uses 0.5 for maximum variability as we are using the p*q
+
+p_hat <- pnorm(sample_mean) ; p_hat
+alpha  <-0.05
+E <- 0.02
+p_hat  <- 0.5
+z_alpha_over_2 <- qnorm(1-alpha / 2)
+n_min <- ceiling(z_alpha_over_2^2 * p_hat * (1- p_hat) / E^2); n_min
+
+The mınımum sample sıze to ensure a 95% confıdence ınterval at most 0.02 should be at least 2401.
+
+for reference the code for third question is as below:
+data <- read.table('/Users/yusaeced/Desktop/statass1/weather.txt', header=TRUE)
+#a) 
+# Summary regarding the Weather 
+summary(data)
+t95H<- qt(0.975, df= n-1); t95H
+t95T <- qt(0.975, df= n-1); t95T
+quantiles <- c(t95H, t95T); quantiles
+sdH<-sd(data$humidity); sdH
+sdT<-sd(data$temperature); sdT
+sds <- c(sdH, sdT); sds
+
+# Graphical summary of the data set
+plot(data$humidity, data$temperature, xlab="Humidity", ylab="Temperature", main="Scatter Plot of Humidity vs. Temperature")
+pairs(data)
+#Histogram, boxplot for humidity
+x_num <- as.numeric(unlist(data$humidity))
+hist(x_num, main='Weather Data', xlab='Humidity')
+abline(v=mean(x_num), col='red', lwd=3)
+boxplot(data$humidity, main = 'Humidity', xlab='percentage', ylab='humidity', col='pink', border='red', horizontal=TRUE )
+#Histogram for temperature
+x2_num <- as.numeric(unlist(data$temperature))
+hist(x2_num, main='Weather Data', xlab='Temperature')
+abline(v=mean(x2_num), col='red', lwd=3)
+boxplot(data$temperature, main = 'Temperature', xlab='Fahrenheit', ylab='temperature', col='pink', border='red', horizontal=TRUE )
+#Scatter plot to explore possible relationship of two variables, respectively
+
+#b)
+# Check the normality via QQ Plot
+hist(x2_num, main='Weather Data', xlab='Temperature')
+qqnorm(data$temperature, ylab='Fahrenheit',pch = 1, frame = FALSE)
+qqline(data$temperature, col = "pink", lwd = 3)
+
+#c)
+result <- t.test(data$temperature, conf.level = 0.90)
+confidence_interval <- result$conf.int; confidence_interval
+
+temperaturedp<-data$temperature
+#samp size
+n <- length(temperaturedp)
+#mean of the data
+sample_mean<- mean(temperaturedp)
+#standar error of the mean
+standart_error <- sd(temperaturedp)/sqrt(n)
+#confdence level
+confidence_level <-0.90
+#calculation of margin of error z*sigma/root n → z-score for confidence level 90% is 1.64 or qnorm(1-0.9)
+margin_of_error <- 1.645 * standart_error #or qt(0.95, df=n-1)*stadart_error/sqrt(n)
+#calculation of confidence interval 
+lowerinterval <- sample_mean - margin_of_error
+upperinterval<- sample_mean + margin_of_error
+confidence_interval <- c(lowerinterval, upperinterval)
+confidence_interval
+
+#d
+p_hat <- pnorm(sample_mean) ; p_hat
+alpha  <-0.05
+E <- 0.02
+p_hat  <- 0.5
+z_alpha_over_2 <- qnorm(1-alpha / 2)
+n_min <- ceiling(z_alpha_over_2^2 * p_hat * (1- p_hat) / E^2); n_min
+
+
