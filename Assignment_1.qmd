@@ -1,41 +1,39 @@
 ---
 title: "Assignment 1"
-author: Alina Baciu
+author: Alina Baciu, Antara Chakrabarty, Yusa Ece Demiral
 date: "2023-25-09"
 format: pdf
 editor: visual
 ---
 
-#                     Statistics, Simulation, Optimization
+                    Statistics, Simulation, Optimization
 
 \newpage
 
-# Exercise 1.1 - Birthweights
+Exercise 1.1 - Birthweights
 
-```{r}
+{r}
 data <- read.csv("birthweight.txt")
 numerical_values = data[["birthweight"]]
-```
 
-### 1.1.1 Check the normality of the data and compute the point estimate for the population mean u of birthweights
+1.1.1 Check the normality of the data and compute the point estimate for the population mean u of birthweights
 
-```{r}
+{r}
 library(rcompanion)
 par(mfrow = c(1,2))
 plotNormalHistogram(numerical_values, main = 'Histogram',
 xlab = 'Birth weights')
 qqnorm(numerical_values)
-```
 
-| The histogram of birthweights illustrates a shape that is close to being bell-shaped while the q-q plot indicates a reasonably close straight-line. Therefore, it is safe to assume that this birthweights sample approximately follows a normal distribution.
-| 
-| The point estimate of the population mean is the sample mean (2913). This was computed by: mean(numerical_values).
+The histogram of birthweights illustrates a shape that is close to being bell-shaped while the q-q plot indicates a reasonably close straight-line. Therefore, it is safe to assume that this birthweights sample approximately follows a normal distribution.
 
-### 1.1.2 Construct the 90% confidence interval for population mean
+The point estimate of the population mean is the sample mean (2913). This was computed by: mean(numerical_values).
 
-| Because the standard deviation of the population is unknown and the sample size is higher than 30 we picked the Student t distribution to construct the confidence interval of the population mean. The margin of error is calculated as E = critical value \* s/sqrt of n. The degrees of freedom are 188 - 1 = 187 and alpha is 0.10. Due to the high number of degrees of freedom we decided to calculate the critical value using the qt() function.
+1.1.2 Construct the 90% confidence interval for population mean
 
-```{r}
+Because the standard deviation of the population is unknown and the sample size is higher than 30 we picked the Student t distribution to construct the confidence interval of the population mean. The margin of error is calculated as E = critical value * s/sqrt of n. The degrees of freedom are 188 - 1 = 187 and alpha is 0.10. Due to the high number of degrees of freedom we decided to calculate the critical value using the qt() function.
+
+{r}
 m <- mean(numerical_values)
 s <- sd(numerical_values) 
 confidence_level <- 0.90
@@ -44,39 +42,36 @@ critical_value <- qt(1-alpha, df = length(numerical_values) - 1)
 margin_of_error <- critical_value * (s / sqrt(length(numerical_values)))
 cat("The", confidence_level * 100, "% confidence interval for the population
 mean is (", (m - margin_of_error), ", ", (m + margin_of_error), ")\n")
-```
 
-### 1.1.3 Claim = the mean birthweight is bigger than 2800. Use a t-test.
+1.1.3 Claim = the mean birthweight is bigger than 2800. Use a t-test.
 
 Ho: u = 2800
 
-Ha: u \> 2800
+Ha: u > 2800
 
 The significance level is 0.05. The sample mean is relevant to the test and the sampling distribution is t.
 
-```{r}
+{r}
 t.test(numerical_values, mu = 2800, alternative = "greater")
-```
 
 Based on the above results, because the p-value of 0.01357 is less than the significance level of 0.05, we reject the null hypothesis in favor of the alternative hypothesis. In conclusion, there is evidence to support the expert's claim that the mean birthweight is greater than 2800.
 
-### 1.1.4 Why is the CI from 1.1.3 different from the CI from 1.1.2? Why is the CI from 1.1.3 one-sided?
+1.1.4 Why is the CI from 1.1.3 different from the CI from 1.1.2? Why is the CI from 1.1.3 one-sided?
 
-The confidence interval from 1.1.2 is a two-tailed interval, computed to receive a range of values used to estimate the true value of the population parameter. On the other hand, the confidence interval from 1.1.3 is a one-tailed interval that provides an estimate in favor of the alternative hypothesis. The confidence interval from 1.1.3 is one-sided because it needs to correspond to the alternative hypothesis u \> 2800.
+The confidence interval from 1.1.2 is a two-tailed interval, computed to receive a range of values used to estimate the true value of the population parameter. On the other hand, the confidence interval from 1.1.3 is a one-tailed interval that provides an estimate in favor of the alternative hypothesis. The confidence interval from 1.1.3 is one-sided because it needs to correspond to the alternative hypothesis u > 2800.
 
-# Exercise 1.2 - Kinderopvangtoeslag
+Exercise 1.2 - Kinderopvangtoeslag
 
-### 1.2.1 Give a point estimate for p
+1.2.1 Give a point estimate for p
 
-```{r}
+{r}
 sample_size <- 200
 sample_proportion <- 140/200
 print(sample_proportion)
-```
 
-### 1.2.2 99% confidence interval for p
+1.2.2 99% confidence interval for p
 
-```{r}
+{r}
 standard_error <- sqrt((sample_proportion * (1 - sample_proportion)) / 
 sample_size)
 critical_z <- qnorm(0.99)
@@ -84,7 +79,6 @@ margin_of_error <- critical_z * standard_error
 cat("The", 0.99 * 100, "% confidence interval for the proportion
 mean is (", (sample_proportion - margin_of_error), ", ", 
 (sample_proportion + margin_of_error), ")\n")
-```
 
 1.2.3 Test the null hypothesis that the fraction is 75%.
 
@@ -94,7 +88,7 @@ Ha: u != 0.75
 
 The sample proportion is relevant to the test, therefore the sampling distribution is Normal.
 
-```{r}
+{r}
 alpha_values <- c(0.1, 0.05, 0.01)
 
 for (alpha in alpha_values) {
@@ -110,8 +104,110 @@ for (alpha in alpha_values) {
     cat("We reject the null hypothesis.\n")
   }
 }
-```
 
 Based on the results above we fail to reject the null hypothesis using 3 different alpha values.
 
 \newpage
+
+Question 1.3.
+
+1.3.a.
+
+First, we read the dataset as a table, and by using functions summary(), sd() we get the numerical summary of the data for humidity and temperature.
+
+data <- read.table('/Users/yusaeced/Desktop/statass1/weather.txt', header=TRUE) summary(data); sdH<-sd(data$humidity); sdT <-sd(data$temperature)
+
+Then, we can implement variety of visualizations to get a better grasp of data. Likewise, we can use a a box plot to seek the distribution of the data as it shows the min, first and third quartiles, median, and max.
+
+#Histogram, boxplot for humidity boxplot(data$humidity, main = 'Humidity', xlab='percentage', ylab='humidity', col='pink', border='red', horizontal=TRUE )
+
+#Histogram, boxplot for temperature boxplot(data$temperature, main = 'Temperature', xlab='Fahrenheit', ylab='temperature', col='pink', border='red', horizontal=TRUE )
+
+To seek normality, distribution of data, and outliers we can use histograms.
+
+#Histogram for Humidity x_num <- as.numeric(unlist(data$humidity)) hist(x_num, main='Weather Data', xlab='Humidity') abline(v=mean(x_num), col='red', lwd=3)
+
+#Histogram for temperature x2_num <- as.numeric(unlist(data$temperature)) hist(x2_num, main='Weather Data', xlab='Temperature') abline(v=mean(x2_num), col='red', lwd=3) Here, we can see that Humidity has a bell-curve shape, we can estimate a normal distribution. However, temperature data has a non-symetric distribution. We can also explore the relationship between these two variables with Scatter Plot. While there is a mild upward trend, it is not a strong relationship where we can declare a positive linear association between temperature and humidity. plot(data$humidity, data$temperature, xlab="Humidity", ylab="Temperature", main="Scatter Plot of Humidity vs. Temperature") pairs(data)
+
+1.3.b.
+
+While the previous use of histogram did not present a normal distribution to determine whether a dataset is approximately normally distributed we can use the normal Q-Q Plot.
+
+op 1 For the temperature example, we can see that most of the data points follow the trendline, but at the extremes we observe divergence. This divergence suggest the presence of outliers or potential deviations from normality. Moreover, data points stray from the line in a non-linear manner suggesting the distribution is not normally distributed.
+
+op 2For the temperature example, we can see that most of the data points follow the trendline, but at the extremes we observe a minor divergence. Therefore, we can say it is a light tailed distribution qqnorm(data$temperature, ylab='Fahrenheit',pch = 1, frame = FALSE) qqline(data$temperature, col = "pink", lwd = 3)
+
+1.3.c. To get the 90% cofidence interval for the mean tempreture we can use the t.test function.
+
+Here we have to options: op1. using t-test to calculate the confidence intervals. confidence_interval ← t.test(data$temperature, conf.level=0.90)$conf.int This formulation calculates the t-test for a sample and provides the 90% confidence interval in the output. $conf.int is used to get the confidence interval.
+
+op 2. #sample size temperaturedp←data$temperature n ← length(temperaturedp) #mean of the data sample_mean ← mean(temperaturedp) #standar error of the mean standart_error ← sd(heights)/sqrt(n) #confdence level confidence_level ← 0.90 #calculation of margin of error zsigma/root n → z-score for confidence level 90% is 1.64 or qnorm(1-0.9) margin_of_error ← 1.64 se #or qt(0.95, df=n-1)*stadart_error/sqrt(n) #calculation of confidence interval lowerinterval ← sample_mean - margin_of_error upperinterval← sample_mean + margin_of_error confidence_interval ← c)lowerinterval, upperinterval); condifence_interval
+
+As per the results, we are 90% confident that the interval from 47.48 57.96 actually contain the true value for the mean temperature. Meaning, if we were to select various samples of the same size and construct the confidence intervals, 90% of them would actually contain the true sample mean. The confidence level refers to the success rate of the process that estimates the mean temperature.
+
+1.3.d. To get the minimum sample size that ensures 95% confidence interval that has at most length 2% we will need to start by defining our parameters: confidence level (1-alpha), maximum margin of error (E), sample proportion (phat). Then calculate the critical value for 95% confidence interval with qnorm(), use the formula (z alpha/2) ^2sample proportion(1-sample proportion)/(maximum margin of error)^2.
+
+!! what should we take the p-value !! - following uses 0.5 for maximum variability as we are using the p*q
+
+p_hat <- pnorm(sample_mean) ; p_hat alpha <-0.05 E <- 0.02 p_hat <- 0.5 z_alpha_over_2 <- qnorm(1-alpha / 2) n_min <- ceiling(z_alpha_over_2^2 * p_hat * (1- p_hat) / E^2); n_min
+
+The minimum sample size to ensure a 95% confidence interval at most 0.02 should be at least 2401.
+
+
+Exercise 1.4 - Jane Austen
+
+1.4.a) Test of Homogeneity
+
+A test of homogeneity is better since we want to compare the styles of the original author ( Jane Austen) and the admirer. 
+
+1.4 b) Testing Homogeneity of Austen
+
+Since we are testing for homogeneity, 
+
+H0 : The distribution of categories among row variables is the same for each column, I.e H0 is the assumption that Austen was consistent in her works. 
+
+{r}
+austen = read.table('C:/Users/antar/Downloads/austen.txt',header=TRUE)
+austen
+onlyausten = subset(austen, select = -c(Sand2) )
+onlyausten
+chisq.test(onlyausten)
+
+We see that p-value > alpha. Therefore, we reject H0 and conclude that Austen herself was not consistent in her works. 
+
+To check where the main inconsistencies are, we map out the residuals in the following manner :
+
+{r}
+z = chisq.test(onlyausten) 
+attributes(z) 
+residuals <- (z$observed - z$expected)/sqrt(z$expected) 
+residuals 
+
+Therefore, biggest contribution towards rejecting H0 : 
+
+'without' count in Sense 
+
+'without' count in Emma 
+
+And the 'a' count in Sand1 
+
+1.4 c) Testing success of Admirer
+
+Once again we assume that H0 is the hypotheses that the admirer was successful and test for homogeneity with the entire data as mentioned in the question 
+
+{r}
+chisq.test(austen) 
+
+Again, p-value comes out as greater than alpha. Therefore, the admirer was unsuccessful, and we must reject homogeneity. 
+
+To check the differences, we compute the residuals:
+
+{r}
+z = chisq.test(austen)
+attributes(z)
+residuals <- (z$observed - z$expected)/sqrt(z$expected)
+residuals
+
+We focus on the column 'Sand2' which is the data obtained from the work of the admirer. We thus observe that the greatest contributions to rejecting H0 are by:
+
+'an' count and the 'without' count.
